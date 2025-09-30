@@ -42,6 +42,7 @@ export default class Player {
     }
 
     draw() {
+        //! сделать проверку на 0, есл
         this.context.save();
 
         // Update rotation angle based on rotation direction and speed
