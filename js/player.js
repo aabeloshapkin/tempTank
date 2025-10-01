@@ -3,6 +3,8 @@ export default class Player {
         this.x = x;
         this.y = y;
         this.context = context;
+        this.velocity = 0.5;
+        this.move = false;
 
         this.rotationAngle = 0; // Current rotation angle in radians
         this.rotationSpeed = 0.01; // Rotation speed per frame
@@ -19,7 +21,10 @@ export default class Player {
                 this.rotationDirection = -1;
             } else if (event.code === "ArrowRight") {
                 this.rotationDirection = 1;
+            } else if (event.code === "ArrowUp") {
+                this.move = true;
             }
+            
         });
 
         document.addEventListener("keyup", event => {
@@ -27,6 +32,8 @@ export default class Player {
                 this.rotationDirection = 0;
             } else if (event.code === "ArrowRight" && this.rotationDirection === 1) {
                 this.rotationDirection = 0;
+            }else if (event.code === "ArrowUp") {
+                this.move = false;
             }
         });
     }
@@ -55,4 +62,14 @@ export default class Player {
         this.drawImg();
         this.context.restore();
     }
+
+    update() {
+        this.draw();
+        this.updatePosition();
+    }
+
+    updatePosition() {
+        if (this.move) this.y -= this.velocity
+    }
+
 }
