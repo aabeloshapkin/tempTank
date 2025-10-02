@@ -69,7 +69,10 @@ export default class Player {
     }
 
     updatePosition() {
-        if (this.move) this.y -= this.velocity
+        if (this.move) {
+            this.x += this.velocity * Math.sin(this.rotationAngle);
+            this.y -= this.velocity * Math.cos(this.rotationAngle);
+        }
     }
 
 }
