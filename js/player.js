@@ -1,3 +1,5 @@
+import Bullet from './bullet.js';
+
 export default class Player {
     constructor(x, y, context) {
         this.x = x;
@@ -75,4 +77,7 @@ export default class Player {
         }
     }
 
+    shoot() {
+        return new Bullet(this.x, this.y, this.rotationAngle, this.context);
+    }
 }
