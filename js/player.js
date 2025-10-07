@@ -1,4 +1,5 @@
 import Bullet from './bullet.js';
+import MuzzleFlash from './muzzleFlash.js';
 
 export default class Player {
     constructor(x, y, context) {
@@ -17,6 +18,9 @@ export default class Player {
         this.imageWidth = 40;
         this.imageHeight = 50;
 
+        this.bullets = [];
+        this.muzzleFlashes = [];
+
         // Keyboard event listeners for rotation control
         document.addEventListener("keydown", event => {
             if (event.code === "ArrowLeft") {
@@ -25,6 +29,8 @@ export default class Player {
                 this.rotationDirection = 1;
             } else if (event.code === "ArrowUp") {
                 this.move = true;
+            } else if (event.code === "Space") {
+                this.createBullet();
             }
             
         });
@@ -75,9 +81,39 @@ export default class Player {
             this.x += this.velocity * Math.sin(this.rotationAngle);
             this.y -= this.velocity * Math.cos(this.rotationAngle);
         }
+        //! ПРОВЕРКА НА ВЫПУЩЕНА ЛИ ПУЛЯ
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+        this.bullets[i].update();
+        this.bullets[i].draw();
+
+        // Remove this.bullets that go off screen
+        if (this.bullets[i].isOffScreen(this.context.width, this.context.height)) {
+            this.bullets.splice(i, 1);
+        }
     }
 
-    shoot() {
-        return new Bullet(this.x, this.y, this.rotationAngle, this.context);
+        // Update and draw muzzle flashes
+        for (let i = this.muzzleFlashes.length - 1; i >= 0; i--) {
+            this.muzzleFlashes[i].update();
+            this.muzzleFlashes[i].draw();
+
+            if (this.muzzleFlashes[i].isExpired()) {
+                this.muzzleFlashes.splice(i, 1);
+            }
+        }
     }
+
+    createBullet(event) {
+        const bullet = new Bullet(this.x, this.y, this.rotationAngle, this.context);
+        this.bullets.push(bullet);
+    
+        // Calculate muzzle flash position at the tank's barrel
+        const barrelLength = 25; // approximate distance from tank center to barrel end
+        const flashX = this.x + barrelLength * Math.sin(this.rotationAngle);
+        const flashY = this.y - barrelLength * Math.cos(this.rotationAngle);
+    
+        const muzzleFlash = new MuzzleFlash(flashX, flashY, this.rotationAngle, this.context);
+        this.muzzleFlashes.push(muzzleFlash);
+    }
+
 }
