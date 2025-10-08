@@ -82,38 +82,42 @@ export default class Player {
             this.y -= this.velocity * Math.cos(this.rotationAngle);
         }
         //! ПРОВЕРКА НА ВЫПУЩЕНА ЛИ ПУЛЯ
-        for (let i = this.bullets.length - 1; i >= 0; i--) {
-        this.bullets[i].update();
-        this.bullets[i].draw();
+        if (this.bullets.length != 0) {
+            for (let i = this.bullets.length - 1; i >= 0; i--) {
+                this.bullets[i].update();
+                this.bullets[i].draw();
 
-        // Remove this.bullets that go off screen
-        if (this.bullets[i].isOffScreen(this.context.width, this.context.height)) {
-            this.bullets.splice(i, 1);
-        }
-    }
+                // Remove this.bullets that go off screen
+                if (this.bullets[i].isOffScreen(this.context.width, this.context.height)) {
+                    this.bullets.splice(i, 1);
+                }
+            }
 
-        // Update and draw muzzle flashes
-        for (let i = this.muzzleFlashes.length - 1; i >= 0; i--) {
-            this.muzzleFlashes[i].update();
-            this.muzzleFlashes[i].draw();
+            // Update and draw muzzle flashes
+            for (let i = this.muzzleFlashes.length - 1; i >= 0; i--) {
+                this.muzzleFlashes[i].update();
+                this.muzzleFlashes[i].draw();
 
-            if (this.muzzleFlashes[i].isExpired()) {
-                this.muzzleFlashes.splice(i, 1);
+                if (this.muzzleFlashes[i].isExpired()) {
+                    this.muzzleFlashes.splice(i, 1);
+                }
             }
         }
     }
 
     createBullet(event) {
-        const bullet = new Bullet(this.x, this.y, this.rotationAngle, this.context);
-        this.bullets.push(bullet);
-    
-        // Calculate muzzle flash position at the tank's barrel
-        const barrelLength = 25; // approximate distance from tank center to barrel end
-        const flashX = this.x + barrelLength * Math.sin(this.rotationAngle);
-        const flashY = this.y - barrelLength * Math.cos(this.rotationAngle);
-    
-        const muzzleFlash = new MuzzleFlash(flashX, flashY, this.rotationAngle, this.context);
-        this.muzzleFlashes.push(muzzleFlash);
+        if (this.bullets.length == 0) {
+            const bullet = new Bullet(this.x, this.y, this.rotationAngle, this.context);
+            this.bullets.push(bullet);
+        
+            // Calculate muzzle flash position at the tank's barrel
+            const barrelLength = 25; // approximate distance from tank center to barrel end
+            const flashX = this.x + barrelLength * Math.sin(this.rotationAngle);
+            const flashY = this.y - barrelLength * Math.cos(this.rotationAngle);
+        
+            const muzzleFlash = new MuzzleFlash(flashX, flashY, this.rotationAngle, this.context);
+            this.muzzleFlashes.push(muzzleFlash);
+        }
     }
 
 }

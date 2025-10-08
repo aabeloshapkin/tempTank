@@ -3,7 +3,7 @@ export default class Bullet {
         this.x = x;
         this.y = y;
         this.context = context;
-        this.speed = 5;
+        this.speed = 4;
         this.angle = angle;
 
         this.image = new Image();
