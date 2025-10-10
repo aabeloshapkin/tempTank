@@ -2,12 +2,17 @@ import Bullet from './bullet.js';
 import MuzzleFlash from './muzzleFlash.js';
 
 export default class Player {
-    constructor(x, y, context) {
-        this.x = x;
-        this.y = y;
+    constructor(canvasWidth, canvasHeight, context) {
+        this.x = canvasWidth / 2;
+        this.y = canvasHeight / 2;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        
         this.context = context;
-        this.velocity = 0.5;
+        this.velocity = 1//0.5;
         this.move = false;
+        this.moveBack = false;
+        
 
         this.rotationAngle = 0; // Current rotation angle in radians
         this.rotationSpeed = 0.01; // Rotation speed per frame
@@ -22,6 +27,7 @@ export default class Player {
         this.muzzleFlashes = [];
 
         // Keyboard event listeners for rotation control
+        //! Переделать под case!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         document.addEventListener("keydown", event => {
             if (event.code === "ArrowLeft") {
                 this.rotationDirection = -1;
@@ -29,6 +35,10 @@ export default class Player {
                 this.rotationDirection = 1;
             } else if (event.code === "ArrowUp") {
                 this.move = true;
+                this.moveBack = false;
+            } else if (event.code === "ArrowDown") {
+                this.move = false;
+                this.moveBack = true;
             } else if (event.code === "Space") {
                 this.createBullet();
             }
@@ -42,7 +52,10 @@ export default class Player {
                 this.rotationDirection = 0;
             }else if (event.code === "ArrowUp") {
                 this.move = false;
+            }else if (event.code === "ArrowDown") {
+                this.moveBack = false;
             }
+            
         });
     }
 
@@ -81,14 +94,35 @@ export default class Player {
             this.x += this.velocity * Math.sin(this.rotationAngle);
             this.y -= this.velocity * Math.cos(this.rotationAngle);
         }
+        if (this.moveBack) {
+            this.x -= this.velocity * Math.sin(this.rotationAngle);
+            this.y += this.velocity * Math.cos(this.rotationAngle);
+        }
+        // Check boundaries to prevent tank from moving outside the canvas
+        if (this.x < this.imageWidth / 2) {
+            this.x = this.imageWidth / 2;
+        } else if (this.x > this.canvasWidth - this.imageWidth / 2) {
+            this.x = this.canvasWidth - this.imageWidth / 2;
+        }
+
+        if (this.y < this.imageHeight / 2) {
+            this.y = this.imageHeight / 2;
+            // this.move = false;
+            // this.moveBack = false;
+        } else if (this.y > this.canvasHeight - this.imageHeight / 2) {
+            this.y = this.canvasHeight - this.imageHeight / 2;
+            // this.move = false;
+            // this.moveBack = false;
+        }
+        
         //! ПРОВЕРКА НА ВЫПУЩЕНА ЛИ ПУЛЯ
         if (this.bullets.length != 0) {
             for (let i = this.bullets.length - 1; i >= 0; i--) {
                 this.bullets[i].update();
                 this.bullets[i].draw();
 
-                // Remove this.bullets that go off screen
-                if (this.bullets[i].isOffScreen(this.context.width, this.context.height)) {
+                //! удаляем пулю за пределами канваса
+                if (this.bullets[i].isOffScreen(this.canvasWidth, this.canvasHeight)) {
                     this.bullets.splice(i, 1);
                 }
             }

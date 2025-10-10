@@ -15,7 +15,7 @@ function startGame() {
 }
 
 function init() {
-    player = new Player(canvas.width/2, canvas.height/2, context);
+    player = new Player(canvas.width, canvas.height, context);
 }
 
 
