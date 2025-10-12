@@ -15,13 +15,20 @@ export default class Player {
         
 
         this.rotationAngle = 0; // Current rotation angle in radians
+        this.rotationAngleBarell = 0;
+        this.rotationDirectionBarell = 0; // -1 for left, 1 for right, 0 for no rotation
         this.rotationSpeed = 0.01; // Rotation speed per frame
         this.rotationDirection = 0; // -1 for left, 1 for right, 0 for no rotation
 
         this.image = new Image();
-        this.image.src = "./img/tank.png";
+        this.image.src = "./img/tank-body.png";
         this.imageWidth = 40;
         this.imageHeight = 50;
+
+        this.image2 = new Image();
+        this.image2.src = "./img/tank-barell.png";
+        // this.imageWidth = 40;
+        // this.imageHeight = 50;
 
         this.bullets = [];
         this.muzzleFlashes = [];
@@ -41,7 +48,10 @@ export default class Player {
                 this.moveBack = true;
             } else if (event.code === "Space") {
                 this.createBullet();
+            } else if (event.code === "KeyA") {
+                this.rotationDirectionBarell = -1;
             }
+            // console.log(event.code)
             
         });
 
@@ -54,14 +64,28 @@ export default class Player {
                 this.move = false;
             }else if (event.code === "ArrowDown") {
                 this.moveBack = false;
+            }else if (event.code === "KeyA") {
+                this.rotationDirection = 0;
+            } else if (event.code === "KeyA" && this.rotationDirectionBarell === -1) {
+                this.rotationDirectionBarell = 0;
             }
             
         });
     }
 
-    drawImg() {
+    drawImgTank() {
         this.context.drawImage(
             this.image,
+            this.x - this.imageWidth / 2,
+            this.y - this.imageHeight / 2,
+            this.imageWidth,
+            this.imageHeight
+        );
+    }
+
+    drawImgBarell() {
+        this.context.drawImage(
+            this.image2,
             this.x - this.imageWidth / 2,
             this.y - this.imageHeight / 2,
             this.imageWidth,
@@ -80,12 +104,31 @@ export default class Player {
         this.context.rotate(this.rotationAngle);
         this.context.translate(-this.x, -this.y);
 
-        this.drawImg();
+        this.drawImgTank();
+        this.drawImgBarell();
+        // this.drawBarell();
+        this.context.restore();
+    }
+
+    drawBarell() {
+        //! сделать проверку на 0, есл
+        this.context.save();
+
+        // Update rotation angle based on rotation direction and speed
+        this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
+
+        this.context.translate(this.x, this.y);
+        this.context.rotate(this.rotationAngleBarell);
+        this.context.translate(-this.x, -this.y);
+
+        // this.drawImg();
+        this.drawImgBarell();
         this.context.restore();
     }
 
     update() {
         this.draw();
+        // this.drawBarell();
         this.updatePosition();
     }
 
