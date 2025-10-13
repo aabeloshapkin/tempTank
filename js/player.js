@@ -50,6 +50,8 @@ export default class Player {
                 this.createBullet();
             } else if (event.code === "KeyA") {
                 this.rotationDirectionBarell = -1;
+            } else if (event.code === "KeyD") {
+                this.rotationDirectionBarell = 1;
             }
             // console.log(event.code)
             
@@ -64,9 +66,9 @@ export default class Player {
                 this.move = false;
             }else if (event.code === "ArrowDown") {
                 this.moveBack = false;
-            }else if (event.code === "KeyA") {
-                this.rotationDirection = 0;
             } else if (event.code === "KeyA" && this.rotationDirectionBarell === -1) {
+                this.rotationDirectionBarell = 0;
+            } else if (event.code === "KeyD" && this.rotationDirectionBarell === 1) {
                 this.rotationDirectionBarell = 0;
             }
             
@@ -105,8 +107,16 @@ export default class Player {
         this.context.translate(-this.x, -this.y);
 
         this.drawImgTank();
+
+        // Update rotation angle based on rotation direction and speed
+        this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
+
+        this.context.translate(this.x, this.y);
+        this.context.rotate(this.rotationAngleBarell);
+        this.context.translate(-this.x, -this.y);
+
         this.drawImgBarell();
-        // this.drawBarell();
+
         this.context.restore();
     }
 
@@ -184,15 +194,15 @@ export default class Player {
 
     createBullet(event) {
         if (this.bullets.length == 0) {
-            const bullet = new Bullet(this.x, this.y, this.rotationAngle, this.context);
+            const bullet = new Bullet(this.x, this.y, this.rotationAngleBarell + this.rotationAngle, this.context);
             this.bullets.push(bullet);
         
             // Calculate muzzle flash position at the tank's barrel
             const barrelLength = 25; // approximate distance from tank center to barrel end
-            const flashX = this.x + barrelLength * Math.sin(this.rotationAngle);
-            const flashY = this.y - barrelLength * Math.cos(this.rotationAngle);
+            const flashX = this.x + barrelLength * Math.sin(this.rotationAngleBarell + this.rotationAngle);
+            const flashY = this.y - barrelLength * Math.cos(this.rotationAngleBarell + this.rotationAngle);
         
-            const muzzleFlash = new MuzzleFlash(flashX, flashY, this.rotationAngle, this.context);
+            const muzzleFlash = new MuzzleFlash(flashX, flashY, this.rotationAngleBarell + this.rotationAngle, this.context);
             this.muzzleFlashes.push(muzzleFlash);
         }
     }
