@@ -1,10 +1,10 @@
 import Bullet from './bullet.js';
 import MuzzleFlash from './muzzleFlash.js';
 
-export default class Player {
+export default class Enemy {
     constructor(canvasWidth, canvasHeight, context) {
-        this.x = canvasWidth / 2;
-        this.y = canvasHeight / 2;
+        this.x = canvasWidth - 100;
+        this.y = 100;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         
@@ -21,61 +21,19 @@ export default class Player {
         this.rotationDirection = 0; // -1 for left, 1 for right, 0 for no rotation
 
         this.image = new Image();
-        this.image.src = "./img/tank-body.png";
+        this.image.src = "./img/tank-enemy.png";
         this.imageWidth = 40;
         this.imageHeight = 50;
 
-        this.image2 = new Image();
-        this.image2.src = "./img/tank-barell.png";
-        // this.imageWidth = 40;
-        // this.imageHeight = 50;
+        // this.image2 = new Image();
+        // this.image2.src = "./img/tank-barell.png";
 
         this.bullets = [];
         this.muzzleFlashes = [];
 
-        // Keyboard event listeners for rotation control
-        //! Переделать под case!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        document.addEventListener("keydown", event => {
-            if (event.code === "ArrowLeft") {
-                this.rotationDirection = -1;
-            } else if (event.code === "ArrowRight") {
-                this.rotationDirection = 1;
-            } else if (event.code === "ArrowUp") {
-                this.move = true;
-                this.moveBack = false;
-            } else if (event.code === "ArrowDown") {
-                this.move = false;
-                this.moveBack = true;
-            } else if (event.code === "Space") {
-                this.createBullet();
-            } else if (event.code === "KeyA") {
-                this.rotationDirectionBarell = -1;
-            } else if (event.code === "KeyD") {
-                this.rotationDirectionBarell = 1;
-            }
-            // console.log(event.code)
-            
-        });
-
-        document.addEventListener("keyup", event => {
-            if (event.code === "ArrowLeft" && this.rotationDirection === -1) {
-                this.rotationDirection = 0;
-            } else if (event.code === "ArrowRight" && this.rotationDirection === 1) {
-                this.rotationDirection = 0;
-            }else if (event.code === "ArrowUp") {
-                this.move = false;
-            }else if (event.code === "ArrowDown") {
-                this.moveBack = false;
-            } else if (event.code === "KeyA" && this.rotationDirectionBarell === -1) {
-                this.rotationDirectionBarell = 0;
-            } else if (event.code === "KeyD" && this.rotationDirectionBarell === 1) {
-                this.rotationDirectionBarell = 0;
-            }
-            
-        });
     }
 
-    drawImgTank() {
+    drawImgEnemyTank() {
         this.context.drawImage(
             this.image,
             this.x - this.imageWidth / 2,
@@ -85,15 +43,15 @@ export default class Player {
         );
     }
 
-    drawImgBarell() {
-        this.context.drawImage(
-            this.image2,
-            this.x - this.imageWidth / 2,
-            this.y - this.imageHeight / 2,
-            this.imageWidth,
-            this.imageHeight
-        );
-    }
+    // drawImgBarell() {
+    //     this.context.drawImage(
+    //         this.image2,
+    //         this.x - this.imageWidth / 2,
+    //         this.y - this.imageHeight / 2,
+    //         this.imageWidth,
+    //         this.imageHeight
+    //     );
+    // }
 
     draw() {
         //! сделать проверку на 0, есл
@@ -106,35 +64,35 @@ export default class Player {
         this.context.rotate(this.rotationAngle);
         this.context.translate(-this.x, -this.y);
 
-        this.drawImgTank();
+        this.drawImgEnemyTank();
 
         // Update rotation angle based on rotation direction and speed
-        this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
+        // this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
 
-        this.context.translate(this.x, this.y);
-        this.context.rotate(this.rotationAngleBarell);
-        this.context.translate(-this.x, -this.y);
+        // this.context.translate(this.x, this.y);
+        // this.context.rotate(this.rotationAngleBarell);
+        // this.context.translate(-this.x, -this.y);
 
-        this.drawImgBarell();
+        // this.drawImgBarell();
 
         this.context.restore();
     }
 
-    drawBarell() {
-        //! сделать проверку на 0, есл
-        this.context.save();
+    // drawBarell() {
+    //     //! сделать проверку на 0, есл
+    //     this.context.save();
 
-        // Update rotation angle based on rotation direction and speed
-        this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
+    //     // Update rotation angle based on rotation direction and speed
+    //     this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
 
-        this.context.translate(this.x, this.y);
-        this.context.rotate(this.rotationAngleBarell);
-        this.context.translate(-this.x, -this.y);
+    //     this.context.translate(this.x, this.y);
+    //     this.context.rotate(this.rotationAngleBarell);
+    //     this.context.translate(-this.x, -this.y);
 
-        // this.drawImg();
-        this.drawImgBarell();
-        this.context.restore();
-    }
+    //     // this.drawImg();
+    //     this.drawImgBarell();
+    //     this.context.restore();
+    // }
 
     update() {
         this.draw();
@@ -144,7 +102,6 @@ export default class Player {
 
     updatePosition() {
         if (this.move) {
-            console.log(this.rotationAngle)
             this.x += this.velocity * Math.sin(this.rotationAngle);
             this.y -= this.velocity * Math.cos(this.rotationAngle);
         }
