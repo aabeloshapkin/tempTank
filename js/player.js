@@ -154,18 +154,22 @@ export default class Player {
         // Check boundaries to prevent tank from moving outside the canvas
         if (this.x < this.imageWidth / 2) {
             this.x = this.imageWidth / 2;
+            this.move = false;
+            this.moveBack = false;
         } else if (this.x > this.canvasWidth - this.imageWidth / 2) {
             this.x = this.canvasWidth - this.imageWidth / 2;
+            this.move = false;
+            this.moveBack = false;
         }
 
         if (this.y < this.imageHeight / 2) {
             this.y = this.imageHeight / 2;
-            // this.move = false;
-            // this.moveBack = false;
+            this.move = false;
+            this.moveBack = false;
         } else if (this.y > this.canvasHeight - this.imageHeight / 2) {
             this.y = this.canvasHeight - this.imageHeight / 2;
-            // this.move = false;
-            // this.moveBack = false;
+            this.move = false;
+            this.moveBack = false;
         }
         
         //! ПРОВЕРКА НА ВЫПУЩЕНА ЛИ ПУЛЯ
