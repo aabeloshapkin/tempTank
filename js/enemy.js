@@ -1,18 +1,17 @@
 import Bullet from './bullet.js';
 import MuzzleFlash from './muzzleFlash.js';
 
-export default class Player {
+export default class Enemy {
     constructor(canvasWidth, canvasHeight, context) {
-        this.x = canvasWidth / 2;
-        this.y = canvasHeight / 2;
+        this.x = canvasWidth - 100;
+        this.y = 100;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        
+
         this.context = context;
-        this.velocity = 1//0.5;
+        this.velocity = 0.5;
         this.move = false;
         this.moveBack = false;
-        
 
         this.rotationAngle = 0; // Current rotation angle in radians
         this.rotationAngleBarell = 0;
@@ -21,61 +20,25 @@ export default class Player {
         this.rotationDirection = 0; // -1 for left, 1 for right, 0 for no rotation
 
         this.image = new Image();
-        this.image.src = "./img/tank-body.png";
+        this.image.src = "./img/tank-enemy.png";
         this.imageWidth = 40;
         this.imageHeight = 50;
 
-        this.image2 = new Image();
-        this.image2.src = "./img/tank-barell.png";
-        // this.imageWidth = 40;
-        // this.imageHeight = 50;
+        // this.image2 = new Image();
+        // this.image2.src = "./img/tank-barell.png";
 
         this.bullets = [];
         this.muzzleFlashes = [];
 
-        // Keyboard event listeners for rotation control
-        //! Переделать под case!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        document.addEventListener("keydown", event => {
-            if (event.code === "ArrowLeft") {
-                this.rotationDirection = -1;
-            } else if (event.code === "ArrowRight") {
-                this.rotationDirection = 1;
-            } else if (event.code === "ArrowUp") {
-                this.move = true;
-                this.moveBack = false;
-            } else if (event.code === "ArrowDown") {
-                this.move = false;
-                this.moveBack = true;
-            } else if (event.code === "Space") {
-                this.createBullet();
-            } else if (event.code === "KeyA") {
-                this.rotationDirectionBarell = -1;
-            } else if (event.code === "KeyD") {
-                this.rotationDirectionBarell = 1;
-            }
-            // console.log(event.code)
-            
-        });
-
-        document.addEventListener("keyup", event => {
-            if (event.code === "ArrowLeft" && this.rotationDirection === -1) {
-                this.rotationDirection = 0;
-            } else if (event.code === "ArrowRight" && this.rotationDirection === 1) {
-                this.rotationDirection = 0;
-            }else if (event.code === "ArrowUp") {
-                this.move = false;
-            }else if (event.code === "ArrowDown") {
-                this.moveBack = false;
-            } else if (event.code === "KeyA" && this.rotationDirectionBarell === -1) {
-                this.rotationDirectionBarell = 0;
-            } else if (event.code === "KeyD" && this.rotationDirectionBarell === 1) {
-                this.rotationDirectionBarell = 0;
-            }
-            
-        });
+        // Random movement variables
+        this.moveTimer = 0;
+        this.moveDuration = Math.random() * 200 + 100; // Random duration between 100-300 frames
+        this.idleTimer = 0;
+        this.idleDuration = Math.random() * 100 + 50; // Random idle time between 50-150 frames
+        this.isMoving = false;
     }
 
-    drawImgTank() {
+    drawImgEnemyTank() {
         this.context.drawImage(
             this.image,
             this.x - this.imageWidth / 2,
@@ -85,15 +48,15 @@ export default class Player {
         );
     }
 
-    drawImgBarell() {
-        this.context.drawImage(
-            this.image2,
-            this.x - this.imageWidth / 2,
-            this.y - this.imageHeight / 2,
-            this.imageWidth,
-            this.imageHeight
-        );
-    }
+    // drawImgBarell() {
+    //     this.context.drawImage(
+    //         this.image2,
+    //         this.x - this.imageWidth / 2,
+    //         this.y - this.imageHeight / 2,
+    //         this.imageWidth,
+    //         this.imageHeight
+    //     );
+    // }
 
     draw() {
         //! сделать проверку на 0, есл
@@ -106,35 +69,35 @@ export default class Player {
         this.context.rotate(this.rotationAngle);
         this.context.translate(-this.x, -this.y);
 
-        this.drawImgTank();
+        this.drawImgEnemyTank();
 
         // Update rotation angle based on rotation direction and speed
-        this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
+        // this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
 
-        this.context.translate(this.x, this.y);
-        this.context.rotate(this.rotationAngleBarell);
-        this.context.translate(-this.x, -this.y);
+        // this.context.translate(this.x, this.y);
+        // this.context.rotate(this.rotationAngleBarell);
+        // this.context.translate(-this.x, -this.y);
 
-        this.drawImgBarell();
+        // this.drawImgBarell();
 
         this.context.restore();
     }
 
-    drawBarell() {
-        //! сделать проверку на 0, есл
-        this.context.save();
+    // drawBarell() {
+    //     //! сделать проверку на 0, есл
+    //     this.context.save();
 
-        // Update rotation angle based on rotation direction and speed
-        this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
+    //     // Update rotation angle based on rotation direction and speed
+    //     this.rotationAngleBarell += this.rotationDirectionBarell * this.rotationSpeed;
 
-        this.context.translate(this.x, this.y);
-        this.context.rotate(this.rotationAngleBarell);
-        this.context.translate(-this.x, -this.y);
+    //     this.context.translate(this.x, this.y);
+    //     this.context.rotate(this.rotationAngleBarell);
+    //     this.context.translate(-this.x, -this.y);
 
-        // this.drawImg();
-        this.drawImgBarell();
-        this.context.restore();
-    }
+    //     // this.drawImg();
+    //     this.drawImgBarell();
+    //     this.context.restore();
+    // }
 
     update() {
         this.draw();
@@ -143,36 +106,85 @@ export default class Player {
     }
 
     updatePosition() {
-        if (this.move) {
-            console.log(this.rotationAngle)
-            this.x += this.velocity * Math.sin(this.rotationAngle);
-            this.y -= this.velocity * Math.cos(this.rotationAngle);
+        // Random movement logic
+        if (this.isMoving) {
+            this.moveTimer++;
+            if (this.moveTimer >= this.moveDuration) {
+                this.isMoving = false;
+                this.move = false;
+                this.moveBack = false;
+                this.rotationDirection = 0;
+                this.idleTimer = 0;
+                this.idleDuration = Math.random() * 100 + 50; // New random idle time
+            } else {
+                // Continue moving in current direction
+                if (this.move) {
+                    this.x += this.velocity * Math.sin(this.rotationAngle);
+                    this.y -= this.velocity * Math.cos(this.rotationAngle);
+                }
+                if (this.moveBack) {
+                    this.x -= this.velocity * Math.sin(this.rotationAngle);
+                    this.y += this.velocity * Math.cos(this.rotationAngle);
+                }
+            }
+        } else {
+            this.idleTimer++;
+            if (this.idleTimer >= this.idleDuration) {
+                this.isMoving = true;
+                this.moveTimer = 0;
+                this.moveDuration = Math.random() * 200 + 100; // New random move duration
+
+                // Choose random action: move forward, backward, or rotate
+                const action = Math.floor(Math.random() * 3);
+                if (action === 0) {
+                    this.move = true;
+                    this.moveBack = false;
+                    this.rotationDirection = 0;
+                } else if (action === 1) {
+                    this.move = false;
+                    this.moveBack = true;
+                    this.rotationDirection = 0;
+                } else {
+                    this.move = false;
+                    this.moveBack = false;
+                    this.rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random rotation direction
+                }
+            }
         }
-        if (this.moveBack) {
-            this.x -= this.velocity * Math.sin(this.rotationAngle);
-            this.y += this.velocity * Math.cos(this.rotationAngle);
-        }
+
         // Check boundaries to prevent tank from moving outside the canvas
         if (this.x < this.imageWidth / 2) {
             this.x = this.imageWidth / 2;
             this.move = false;
             this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         } else if (this.x > this.canvasWidth - this.imageWidth / 2) {
             this.x = this.canvasWidth - this.imageWidth / 2;
             this.move = false;
             this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         }
 
         if (this.y < this.imageHeight / 2) {
             this.y = this.imageHeight / 2;
             this.move = false;
             this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         } else if (this.y > this.canvasHeight - this.imageHeight / 2) {
             this.y = this.canvasHeight - this.imageHeight / 2;
             this.move = false;
             this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         }
-        
+
         //! ПРОВЕРКА НА ВЫПУЩЕНА ЛИ ПУЛЯ
         if (this.bullets.length != 0) {
             for (let i = this.bullets.length - 1; i >= 0; i--) {
