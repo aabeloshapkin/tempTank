@@ -7,12 +7,11 @@ export default class Enemy {
         this.y = 100;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        
+
         this.context = context;
-        this.velocity = 1//0.5;
+        this.velocity = 0.5;
         this.move = false;
         this.moveBack = false;
-        
 
         this.rotationAngle = 0; // Current rotation angle in radians
         this.rotationAngleBarell = 0;
@@ -31,6 +30,12 @@ export default class Enemy {
         this.bullets = [];
         this.muzzleFlashes = [];
 
+        // Random movement variables
+        this.moveTimer = 0;
+        this.moveDuration = Math.random() * 200 + 100; // Random duration between 100-300 frames
+        this.idleTimer = 0;
+        this.idleDuration = Math.random() * 100 + 50; // Random idle time between 50-150 frames
+        this.isMoving = false;
     }
 
     drawImgEnemyTank() {
@@ -101,31 +106,85 @@ export default class Enemy {
     }
 
     updatePosition() {
-        if (this.move) {
-            this.x += this.velocity * Math.sin(this.rotationAngle);
-            this.y -= this.velocity * Math.cos(this.rotationAngle);
+        // Random movement logic
+        if (this.isMoving) {
+            this.moveTimer++;
+            if (this.moveTimer >= this.moveDuration) {
+                this.isMoving = false;
+                this.move = false;
+                this.moveBack = false;
+                this.rotationDirection = 0;
+                this.idleTimer = 0;
+                this.idleDuration = Math.random() * 100 + 50; // New random idle time
+            } else {
+                // Continue moving in current direction
+                if (this.move) {
+                    this.x += this.velocity * Math.sin(this.rotationAngle);
+                    this.y -= this.velocity * Math.cos(this.rotationAngle);
+                }
+                if (this.moveBack) {
+                    this.x -= this.velocity * Math.sin(this.rotationAngle);
+                    this.y += this.velocity * Math.cos(this.rotationAngle);
+                }
+            }
+        } else {
+            this.idleTimer++;
+            if (this.idleTimer >= this.idleDuration) {
+                this.isMoving = true;
+                this.moveTimer = 0;
+                this.moveDuration = Math.random() * 200 + 100; // New random move duration
+
+                // Choose random action: move forward, backward, or rotate
+                const action = Math.floor(Math.random() * 3);
+                if (action === 0) {
+                    this.move = true;
+                    this.moveBack = false;
+                    this.rotationDirection = 0;
+                } else if (action === 1) {
+                    this.move = false;
+                    this.moveBack = true;
+                    this.rotationDirection = 0;
+                } else {
+                    this.move = false;
+                    this.moveBack = false;
+                    this.rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random rotation direction
+                }
+            }
         }
-        if (this.moveBack) {
-            this.x -= this.velocity * Math.sin(this.rotationAngle);
-            this.y += this.velocity * Math.cos(this.rotationAngle);
-        }
+
         // Check boundaries to prevent tank from moving outside the canvas
         if (this.x < this.imageWidth / 2) {
             this.x = this.imageWidth / 2;
+            this.move = false;
+            this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         } else if (this.x > this.canvasWidth - this.imageWidth / 2) {
             this.x = this.canvasWidth - this.imageWidth / 2;
+            this.move = false;
+            this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         }
 
         if (this.y < this.imageHeight / 2) {
             this.y = this.imageHeight / 2;
-            // this.move = false;
-            // this.moveBack = false;
+            this.move = false;
+            this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         } else if (this.y > this.canvasHeight - this.imageHeight / 2) {
             this.y = this.canvasHeight - this.imageHeight / 2;
-            // this.move = false;
-            // this.moveBack = false;
+            this.move = false;
+            this.moveBack = false;
+            this.rotationDirection = 0;
+            this.isMoving = false;
+            this.idleTimer = 0;
         }
-        
+
         //! ПРОВЕРКА НА ВЫПУЩЕНА ЛИ ПУЛЯ
         if (this.bullets.length != 0) {
             for (let i = this.bullets.length - 1; i >= 0; i--) {
