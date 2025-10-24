@@ -3,8 +3,8 @@ import MuzzleFlash from './muzzleFlash.js';
 
 export default class Enemy {
     constructor(canvasWidth, canvasHeight, context) {
-        this.x = canvasWidth - 100;
-        this.y = 100;
+        this.x = canvasWidth - 600;
+        this.y = 700;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
 
@@ -35,7 +35,7 @@ export default class Enemy {
         this.moveDuration = Math.random() * 200 + 100; // Random duration between 100-300 frames
         this.idleTimer = 0;
         this.idleDuration = Math.random() * 100 + 50; // Random idle time between 50-150 frames
-        this.isMoving = false;
+        this.isMoving = true;
     }
 
     drawImgEnemyTank() {
@@ -107,34 +107,9 @@ export default class Enemy {
 
     updatePosition() {
         // Random movement logic
-        if (this.isMoving) {
+        // if (this.isMoving) {
             this.moveTimer++;
             if (this.moveTimer >= this.moveDuration) {
-                this.isMoving = false;
-                this.move = false;
-                this.moveBack = false;
-                this.rotationDirection = 0;
-                this.idleTimer = 0;
-                this.idleDuration = Math.random() * 100 + 50; // New random idle time
-            } else {
-                // Continue moving in current direction
-                if (this.move) {
-                    this.x += this.velocity * Math.sin(this.rotationAngle);
-                    this.y -= this.velocity * Math.cos(this.rotationAngle);
-                }
-                if (this.moveBack) {
-                    this.x -= this.velocity * Math.sin(this.rotationAngle);
-                    this.y += this.velocity * Math.cos(this.rotationAngle);
-                }
-            }
-        } else {
-            this.idleTimer++;
-            if (this.idleTimer >= this.idleDuration) {
-                this.isMoving = true;
-                this.moveTimer = 0;
-                this.moveDuration = Math.random() * 200 + 100; // New random move duration
-
-                // Choose random action: move forward, backward, or rotate
                 const action = Math.floor(Math.random() * 3);
                 if (action === 0) {
                     this.move = true;
@@ -149,8 +124,49 @@ export default class Enemy {
                     this.moveBack = false;
                     this.rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random rotation direction
                 }
+                this.moveTimer=0
+                // this.isMoving = false;
+                // this.move = false;
+                // this.moveBack = false;
+                // this.rotationDirection = 0;
+                // this.idleTimer = 0;
+                // this.idleDuration = Math.random() * 100 + 50; // New random idle time
+            } else {
+                this.move = true;
+                // Continue moving in current direction
+                if (this.move) {
+                    this.x += this.velocity * Math.sin(this.rotationAngle);
+                    this.y -= this.velocity * Math.cos(this.rotationAngle);
+                }
+                if (this.moveBack) {
+                    this.x -= this.velocity * Math.sin(this.rotationAngle);
+                    this.y += this.velocity * Math.cos(this.rotationAngle);
+                }
             }
-        }
+        // } else {
+        //     this.idleTimer++;
+        //     if (this.idleTimer >= this.idleDuration) {
+        //         this.isMoving = true;
+        //         this.moveTimer = 0;
+        //         this.moveDuration = Math.random() * 200 + 100; // New random move duration
+
+        //         // Choose random action: move forward, backward, or rotate
+                // const action = Math.floor(Math.random() * 3);
+                // if (action === 0) {
+                //     this.move = true;
+                //     this.moveBack = false;
+                //     this.rotationDirection = 0;
+                // } else if (action === 1) {
+                //     this.move = false;
+                //     this.moveBack = true;
+                //     this.rotationDirection = 0;
+                // } else {
+                //     this.move = false;
+                //     this.moveBack = false;
+                //     this.rotationDirection = Math.random() > 0.5 ? 1 : -1; // Random rotation direction
+                // }
+        //     }
+        // }
 
         // Check boundaries to prevent tank from moving outside the canvas
         if (this.x < this.imageWidth / 2) {
