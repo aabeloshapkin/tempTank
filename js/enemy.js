@@ -10,7 +10,7 @@ export default class Enemy {
 
         this.context = context;
         this.velocity = 0.5;
-        this.move = false;
+        this.move = true;
         this.moveBack = false;
 
         this.rotationAngle = 0; // Current rotation angle in radians
@@ -102,6 +102,7 @@ export default class Enemy {
     update() {
         this.draw();
         // this.drawBarell();
+        // console.log(this.moveTimer)
         this.updatePosition();
     }
 
@@ -109,7 +110,9 @@ export default class Enemy {
         // Random movement logic
         // if (this.isMoving) {
             this.moveTimer++;
+            console.log(this.moveDuration)
             if (this.moveTimer >= this.moveDuration) {
+                // console.log("true")
                 const action = Math.floor(Math.random() * 3);
                 if (action === 0) {
                     this.move = true;
@@ -132,7 +135,7 @@ export default class Enemy {
                 // this.idleTimer = 0;
                 // this.idleDuration = Math.random() * 100 + 50; // New random idle time
             } else {
-                this.move = true;
+                // this.move = true;
                 // Continue moving in current direction
                 if (this.move) {
                     this.x += this.velocity * Math.sin(this.rotationAngle);
