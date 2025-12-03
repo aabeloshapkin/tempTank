@@ -132,7 +132,7 @@ export default class Enemy {
             // this.idleTimer = 0;
             // this.idleDuration = Math.random() * 100 + 50; // New random idle time
         } else {
-            this.move = true;
+            // this.move = true;
             // Continue moving in current direction
             if (this.move) {
                 this.x += this.velocity * Math.sin(this.rotationAngle);
@@ -146,6 +146,8 @@ export default class Enemy {
 
         // Check boundaries to prevent tank from moving outside the canvas
         if (this.x < this.imageWidth / 2) {
+            console.log("stop")
+            this.moveTimer = this.moveDuration + 1;
             this.x = this.imageWidth / 2;
             this.move = false;
             this.moveBack = true;
@@ -153,6 +155,8 @@ export default class Enemy {
             // this.isMoving = false;
             this.idleTimer = 0;
         } else if (this.x > this.canvasWidth - this.imageWidth / 2) {
+            console.log("stop")
+            this.moveTimer = this.moveDuration + 1;
             this.x = this.canvasWidth - this.imageWidth / 2;
             this.move = false;
             this.moveBack = true;
@@ -162,6 +166,8 @@ export default class Enemy {
         }
 
         if (this.y < this.imageHeight / 2) {
+            console.log("stop")
+            this.moveTimer = this.moveDuration + 1;
             this.y = this.imageHeight / 2;
             this.move = false;
             this.moveBack = true;
@@ -169,6 +175,8 @@ export default class Enemy {
             // this.isMoving = false;
             this.idleTimer = 0;
         } else if (this.y > this.canvasHeight - this.imageHeight / 2) {
+            console.log("stop")
+            this.moveTimer = this.moveDuration + 1;
             this.y = this.canvasHeight - this.imageHeight / 2;
             this.move = false;
             this.moveBack = true;
